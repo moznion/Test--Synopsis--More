@@ -1,0 +1,10 @@
+=encoding utf8
+
+=head1 Name
+
+Test::Synopsis::More - Enhanced Test::Synopsis
+
+
+=head1 まだとちゅうです
+
+Miyagawa さんが作られたTest::Synopsis (L<Test::Synopsis>) を改造してます。こんな改造(むしろ改悪(?))してお前どうすんの？ って感じですが、まあ自分が「こういう風に使いたいなー」とか思ったのでやってます。なのでShipIt するかどうかはあやしいです。そのうちちゃんとドキュメント書きます。
