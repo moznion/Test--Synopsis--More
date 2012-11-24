@@ -65,9 +65,7 @@ sub extract_synopsis {
 
     my $synopsis = ( $content =~ m/^=head1\s+SYNOPSIS(.+?)^=head1/ms )[0];
 
-    unless (defined($synopsis)) {
-        croak("SYNOPSIS section is not exist.\n");
-    }
+    return unless defined($synopsis);
 
     # Remove comments in SYNOPSIS section
     $synopsis =~ s/^=for\s+test_synopsis_more\s+comment\s+begin.+?^=for\s+test_synopsis_more\s+comment\s+end//msg;

@@ -6,4 +6,4 @@ BEGIN {
     use Test::Synopsis::More;
 }
 
-dies_ok { plural_synopsis_ok('t/lib/NotContainPod.pm') };
+plural_synopsis_ok('t/lib/NotContainPod.pm');
