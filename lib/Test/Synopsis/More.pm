@@ -94,19 +94,15 @@ sub extract_synopsis {
     }
 
     return \@synopsis_codes, \@lines, \@options_each_synopsis, ($content =~ m/^=for\s+test_synopsis\s+(.+?)^=/msg);
-    #       |_synopsis        |_line of occuring error             |_global options
 }
 
 sub _extract_individual_synopsis_options {
     my $code = shift;
 
-    my $locally_options;
-    while ($$code =~ m/^=for\s+test_synopsis_more\s+option\s+begin(.+?)^=for\s+test_synopsis_more\s+option\s+end/msg) {
-        push @$locally_options, $1;
-        $$code =~ s/^=for\s+test_synopsis_more\s+option\s+begin(.+?)^=for\s+test_synopsis_more\s+option\s+end//ms; # FIXME Is this redundant?
-    }
+    my @locally_options = $$code =~ m/^=for\s+test_synopsis_more\s+option\s+begin(.+?)^=for\s+test_synopsis_more\s+option\s+end/msg;
+    $$code =~ s/^=for\s+test_synopsis_more\s+option\s+begin.+?^=for\s+test_synopsis_more\s+option\s+end//msg;
 
-    return $locally_options;
+    return \@locally_options;
 }
 
 1;
