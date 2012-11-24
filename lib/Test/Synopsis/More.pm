@@ -13,7 +13,7 @@ use vars qw/$VERSION @ISA @EXPORT/;
 BEGIN {
     $VERSION = '0.01';
     @ISA     = qw/Exporter Test::Synopsis/;
-    @EXPORT  = qw/plural_all_synopsis_ok/;    # TODO implement
+    @EXPORT  = qw/plural_all_synopsis_ok plural_synopsis_ok/;    # TODO implement
 }
 
 sub plural_all_synopsis_ok {    # TODO Should discuss about function name
@@ -65,8 +65,12 @@ sub extract_synopsis {
 
     my $synopsis = ( $content =~ m/^=head1\s+SYNOPSIS(.+?)^=head1/ms )[0];
 
+    unless (defined($synopsis)) {
+        croak("SYNOPSIS section is not exist.\n");
+    }
+
     # Remove comments in SYNOPSIS section
-    $synopsis =~ s/^=for\s+test_synopsis_more\s+comment\s+begin(.+?)^=for\s+test_synopsis_more\s+comment\s+end//msg;
+    $synopsis =~ s/^=for\s+test_synopsis_more\s+comment\s+begin.+?^=for\s+test_synopsis_more\s+comment\s+end//msg;
 
     my $line = ( $` || '' ) =~ tr/\n/\n/;
     my @lines;
