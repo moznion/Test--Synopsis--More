@@ -67,10 +67,8 @@ sub extract_synopsis {
 
     return unless defined($synopsis);
 
-    # Remove comments in SYNOPSIS section
-    $synopsis =~ s/^=for\s+test_synopsis_more\s+comment\s+begin.+?^=for\s+test_synopsis_more\s+comment\s+end//msg;
-
     my $line = ( $` || '' ) =~ tr/\n/\n/;
+
     my @lines;
     my @synopsis_codes;
     my @options_each_synopsis;
@@ -79,6 +77,7 @@ sub extract_synopsis {
     while (1) {
         push @lines, ( $line + $line_locally );
         if ( my($this_synopsis, $next_synopsis) = $synopsis =~ m/(.+?)^=for\s+test_synopsis_more\s+divide(.+)/ms ) {
+            # Add 1?
             $line_locally += ( $this_synopsis =~ tr/\n/\n/ );
             push @options_each_synopsis, _extract_individual_synopsis_options(\$this_synopsis);
             #push @synopsis_codes, _remove_comment($this_synopsis);
@@ -91,6 +90,17 @@ sub extract_synopsis {
             push @synopsis_codes, $synopsis;
             last;
         }
+    }
+
+    # Remove comment
+    foreach my $code (@synopsis_codes) {
+        my @matched = $code =~ m/^=for\s+test_synopsis_more\s+comment\s+begin\n(.+?)^=for\s+test_synopsis_more\s+comment\s+end\n/msg;
+        my $newline_count = 1;
+        foreach my $match (@matched) {
+            $newline_count += $match =~ tr/\n/\n/;
+        }
+        my $newline = "\n" x $newline_count;
+        $code =~ s/^=for\s+test_synopsis_more\s+comment\s+begin.+?^=for\s+test_synopsis_more\s+comment\s+end/$newline/msg;
     }
 
     return \@synopsis_codes, \@lines, \@options_each_synopsis, ($content =~ m/^=for\s+test_synopsis\s+(.+?)^=/msg);
