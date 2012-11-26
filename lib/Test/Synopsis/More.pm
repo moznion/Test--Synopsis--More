@@ -7,6 +7,7 @@ use Exporter;
 
 use Test::Synopsis;
 use ExtUtils::Manifest qw/maniread/;
+use Data::Dumper;
 
 use vars qw/$VERSION @ISA @EXPORT/;
 
@@ -77,15 +78,23 @@ sub extract_synopsis {
     while (1) {
         push @lines, ( $line + $line_locally );
         if ( my($this_synopsis, $next_synopsis) = $synopsis =~ m/(.+?)^=for\s+test_synopsis_more\s+divide(.+)/ms ) {
-            # Add 1?
             $line_locally += ( $this_synopsis =~ tr/\n/\n/ );
-            push @options_each_synopsis, _extract_individual_synopsis_options(\$this_synopsis);
+            push @options_each_synopsis, _extract_individual_synopsis_options($this_synopsis);
             #push @synopsis_codes, _remove_comment($this_synopsis);
             push @synopsis_codes, $this_synopsis;
             $synopsis = $next_synopsis;
         }
         else {
-            push @options_each_synopsis, _extract_individual_synopsis_options(\$synopsis);
+            push @options_each_synopsis, _extract_individual_synopsis_options($synopsis);
+
+            my $newline_count = 0;
+            foreach my $option (@options_each_synopsis) {
+                foreach my $match (@$option) {
+                    $newline_count += $match =~ tr/\n/\n/;
+                }
+            }
+            $lines[-1] -= $newline_count;
+
             #push @synopsis_codes, _remove_comment($synopsis);
             push @synopsis_codes, $synopsis;
             last;
@@ -101,6 +110,11 @@ sub extract_synopsis {
         }
         my $newline = "\n" x $newline_count;
         $code =~ s/^=for\s+test_synopsis_more\s+comment\s+begin.+?^=for\s+test_synopsis_more\s+comment\s+end/$newline/msg;
+
+        my @option = $code =~ m/^=for\s+test_synopsis_more\s+option\s+begin(.+?)^=for\s+test_synopsis_more\s+option\s+end/msg;
+        if (@option) {
+            $code =~ s/^=for\s+test_synopsis_more\s+option\s+begin.+?^=for\s+test_synopsis_more\s+option\s+end/\n\n/msg;
+        }
     }
 
     return \@synopsis_codes, \@lines, \@options_each_synopsis, ($content =~ m/^=for\s+test_synopsis\s+(.+?)^=/msg);
@@ -109,9 +123,7 @@ sub extract_synopsis {
 sub _extract_individual_synopsis_options {
     my $code = shift;
 
-    my @locally_options = $$code =~ m/^=for\s+test_synopsis_more\s+option\s+begin(.+?)^=for\s+test_synopsis_more\s+option\s+end/msg;
-    $$code =~ s/^=for\s+test_synopsis_more\s+option\s+begin.+?^=for\s+test_synopsis_more\s+option\s+end//msg;
-
+    my @locally_options = $code =~ m/^=for\s+test_synopsis_more\s+option\s+begin(.+?)^=for\s+test_synopsis_more\s+option\s+end/msg;
     return \@locally_options;
 }
 
