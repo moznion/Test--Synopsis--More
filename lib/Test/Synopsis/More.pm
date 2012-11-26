@@ -75,17 +75,19 @@ sub extract_synopsis {
     my @synopsis_codes;
     my @options_each_synopsis;
 
-    my $line_locally = 1;
+    my $line_locally = 0; #FIXME
     while (1) {
         push @lines, ( $line + $line_locally );
         if ( my($this_synopsis, $next_synopsis) = $synopsis =~ m/(.+?)^=for\s+test_synopsis_more\s+divide(.+)/ms ) {
+            $line_locally += ( $this_synopsis =~ tr/\n/\n/ );
             push @options_each_synopsis, _extract_individual_synopsis_options(\$this_synopsis);
+            #push @synopsis_codes, _remove_comment($this_synopsis);
             push @synopsis_codes, $this_synopsis;
             $synopsis = $next_synopsis;
-            $line_locally += ( $this_synopsis =~ tr/\n/\n/ );
         }
         else {
             push @options_each_synopsis, _extract_individual_synopsis_options(\$synopsis);
+            #push @synopsis_codes, _remove_comment($synopsis);
             push @synopsis_codes, $synopsis;
             last;
         }
@@ -101,6 +103,11 @@ sub _extract_individual_synopsis_options {
     $$code =~ s/^=for\s+test_synopsis_more\s+option\s+begin.+?^=for\s+test_synopsis_more\s+option\s+end//msg;
 
     return \@locally_options;
+}
+
+sub _remove_comment {
+    my $synopsis = shift;
+    return ($synopsis =~ s/^\S.*$//mg);
 }
 
 1;
