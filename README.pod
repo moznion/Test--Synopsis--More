@@ -5,6 +5,11 @@
 Test::Synopsis::More - Enhanced Test::Synopsis
 
 
-=head1 まだとちゅうです
+=head1 ざんがいです
 
-Miyagawa さんが作られたTest::Synopsis (L<Test::Synopsis>) を改造してます。こんな改造(むしろ改悪(?))してお前どうすんの？ って感じですが、まあ自分が「こういう風に使いたいなー」とか思ったのでやってます。なのでShipIt するかどうかはあやしいです。そのうちちゃんとドキュメント書きます。
+Miyagawa さんが作られたTest::Synopsis (L<Test::Synopsis>) を改造してました。自分が「こういう風に使いたいなー」とか思ったので書いてました。試行錯誤のすえの残骸です。
+
+
+=head1 This is the wreck
+
+I modified L<Test::Synopsis> which was made by Miyagawa-san. I try this by trial and error. This is the wreck as the result.
